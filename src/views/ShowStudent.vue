@@ -1,121 +1,16 @@
-<!-- 
-
-<template>
-  <div class="container  " style="margin-left:18rem;margin-top:4rem">
-
-    <RouterLink class="btn btn-primary " to="/studentcreate" style="float:right;">Add new Student</RouterLink>
-    <table class="table table-dark">
-      <thead>
-        <tr>
-          <th scope="col">id</th>
-          <th scope="col">name</th>
-          <th scope="col">class</th>
-          <th scope="col">image</th>
-          <th scope="col">actions</th>
-
-        </tr>
-      </thead>
-      <tbody v-if="users.length >0">
-        <tr class="" v-for="user in users" v-bind:key="user.id">
-          <td scope="row"> {{ $index +1 }} </td>
-          <td> {{ user.name }} </td>
-          <td> {{ user.class }} </td>
-          <td> <img class="image" v-bind:src=user.image alt="image" style="height:60px;width:60px"></td>
-
-          <td>
-            <RouterLink class="btn btn-success " :to="{ path: ('/student/' + user.id + '/edit') }">Edit</RouterLink>
-            <button class="btn btn-danger  " style="margin-left:.6rem" @click="Deletestudent(user.id)">Delete</button>
-
-          </td>
-        </tr>
-
-      </tbody>
-      <tbody v-else>
-        <tr>
-          <td>
-            <h1 colspan="4">Loading....</h1>
-          </td>
-        </tr>
-
-
-      </tbody>
-    </table>
-
-  </div>
-</template>
-
-
-<script>
-// import Vue from 'vue'
-import { RouterLink } from "vue-router";
-import axios from "axios";
-
-// Vue.use(axios)
-
-export default {
-  name: "StudentShow",
-  data() {
-    return {
-      users: {},
-    };
-  },
-  created() {
-    this.StudentShow();
-  },
-  methods: {
-    StudentShow() {
-
-    
-        axios.get('http://127.0.0.1:8000/api/students').then(({data}) => {
-          // console.log('fjlkdjlksd')
-          this.users = data;
-          console.log(data);
-        });
-   
-
-    },
-
-    Deletestudent(studentid){
-
-      if(confirm('Are you sure, you want to delete student !')){
-
-        axios.delete(`http://127.0.0.1:8000/api/student/${studentid}/delete`).then(res=>{
-         alert(res.data.message);
-         this.StudentShow();
-          console.log(res.message);
-        })
-
-      }
-
-
-
-    }
-
-  },
-  components: { RouterLink }
-};
-</script>
- -->
-
-
-
-
-
-
-
 <template>
   <div id="product">
     <div class="col-12">
       <div class="card">
         <div class="row card-header bg-transparent border-bottom">
           <div class="col-md-8">
-            <h4 class="card-title">List Of Students</h4>
-            <span>This is a Student related information</span>
+            <h4 class="card-title">List Of Countries</h4>
+            <span>This is a country related information</span>
           </div>
 
           <div class="col-md-4">
             <button type="button" @click="create" class="btn btn-sm btn-success float-end">
-              <i class="fas fa-plus"></i> Add Student
+              <i class="fas fa-plus"></i> Add Country
             </button>
           </div>
         </div>
@@ -166,37 +61,38 @@ export default {
           <table class="table table-bordered dt-responsive nowrap w-100">
             <thead>
               <tr>
-                <th scope="col">id</th>
-                <th scope="col">name</th>
-                <th scope="col">class</th>
-                <th scope="col">image</th>
-                <th scope="col">actions</th>
+                <th>Serial No</th>
+                <th>Name</th>
+                <!-- <th>Bn Name</th> -->
+                <th>Code</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
 
             <tbody>
-              <tr v-for="(student, index) of students">
+              <tr v-for="(country, index) of countries">
                 <td>{{ index + 1 }}</td>
-                <td>{{ student.name }}</td>
-                <td>{{ student.class }}</td>
-                <td> <img class="image" v-bind:src=student.image alt="image" style="height:60px;width:60px"></td>
-
+                <td>{{ country.name }}</td>
+                <!-- <td>{{ country.bn_name }}</td> -->
+                <td>{{ country.code }}</td>
+                <td>{{ country.status }}</td>
                 <td>
-                  <!-- <button type="button" @click="show(student)" class="btn btn-info btn-sm" style="margin-right: 5px;">
+                  <!-- <button type="button" @click="show(country)" class="btn btn-info btn-sm" style="margin-right: 5px;">
                     <i class="fas fa-eye"></i>
                   </button> -->
 
-                  <button type="button" @click="edit(student)" class="btn btn-primary btn-sm" style="margin-right: 5px;">
-                    <i class="fas fa-edit">Edit</i>
+                  <button type="button" @click="edit(country)" class="btn btn-primary btn-sm" style="margin-right: 5px;">
+                    <i class="fas fa-edit"></i>
                   </button>
 
-                  <button type="button" @click="destroy(student.id)" class="btn btn-danger btn-sm">
-                    <i class="fas fa-trash-alt">Delete</i>
+                  <button type="button" @click="destroy(country.id)" class="btn btn-danger btn-sm">
+                    <i class="fas fa-trash-alt"></i>
                   </button>
                 </td>
               </tr>
 
-              <tr v-show="!students.length">
+              <tr v-show="!countries.length">
                 <td colspan="6">
                   <div class="alert alert-danger text-danger text-center" role="alert">
                     No data available in table :(
@@ -206,14 +102,14 @@ export default {
             </tbody>
           </table>
 
-          <!-- <div v-if="students.length" class="d-flex">
-            <div class="col-md-4 pl-0" style="margin: auto" v-if="students.length">
+          <div v-if="countries.length" class="d-flex">
+            <div class="col-md-4 pl-0" style="margin: auto" v-if="countries.length">
               Showing {{ pagination.from }} to {{ pagination.to }} from
               {{ pagination.total }} entiries
             </div>
 
             <PaginationComponent :links="links" @get-data="getData" />
-          </div> -->
+          </div>
         </div>
       </div>
 
@@ -246,20 +142,12 @@ export default {
                   </div> -->
 
                   <div class="form-group mb-3">
-                    <label>Class</label>
-                    <input v-model="form.class" type="text" name="class" class="form-control" placeholder="Class" :readonly="showMode == true ? true : false"/>
-                    <HasError :form="form" field="class" />
+                    <label>Code</label>
+                    <input v-model="form.code" type="text" name="code" class="form-control" placeholder="Code" :readonly="showMode == true ? true : false"/>
+                    <HasError :form="form" field="code" />
                   </div>
 
                   <div class="form-group mb-3">
-                    <label>Image</label>
-                    <input type="file" name="image" @change="onImageChange" class="form-control" placeholder="Class" :readonly="showMode == true ? true : false"/>
-                    <img class="image" v-bind:src="form.image" alt="image" style="height:60px;width:60px">
-
-                    <HasError :form="form" field="class" />
-                  </div>
-
-                  <!-- <div class="form-group mb-3">
                     <label>Status</label>
                     <select name="status" class="form-control" v-model="form.status">
                       <option value="">Select One</option>
@@ -267,7 +155,7 @@ export default {
                       <option value="Inactive">Inactive</option>
                     </select>
                     <HasError :form="form" field="status" />
-                  </div> -->
+                  </div>
                 </div>
 
                 <div class="modal-footer">
@@ -290,19 +178,11 @@ export default {
 <script>
 import axios from "axios";
 import Form from "vform";
-import swal from 'sweetalert2';
 import { Button, HasError, AlertError, AlertErrors, AlertSuccess } from "vform/src/components/bootstrap5";
-import PaginationComponent from "../components/PaginationComponent.vue";
-import VueProgressBar from 'vue-progressbar';
-
-Vue.use(VueProgressBar, {
-  color: 'green',
-  failedColor: 'red',
-  thickness: '5px',
-});
+import PaginationComponent from "../../../components/PaginationComponent.vue";
 
 export default {
-  name: "StudentTable",
+  name: "CCCNewsTable",
   components: {
     PaginationComponent,
     Button,
@@ -321,37 +201,37 @@ export default {
       keyword: "",
       fieldName: "name",
       perPage: 10,
-      students:[],
-      // countries: [],
+      countries: [],
       pagination: [],
       links: [],
 
       form: new Form({
         id: "",
         name: "",
-        class: "",
-        image: "",
-
+        bn_name: "",
+        code: "",
+        status: ''
       }),
     };
   },
+
   watch: {
     keyword: function () {
       this.getData();
     },
   },
-    
+
   mounted() {
-    // console.log("Component mounted.");
+    console.log("Component mounted.");
     this.getData();
   },
 
   methods: {
     getData(url) {
       this.$Progress.start();
-      // let linkUrl = url ? url : `${this.backendUrl}student`;
+      let linkUrl = url ? url : `${this.backendUrl}country`;
       axios
-        .get('http://127.0.0.1:8000/api/students', {
+        .get(linkUrl, {
           params: {
             per_page: this.perPage,
             field_name: this.fieldName,
@@ -359,11 +239,10 @@ export default {
           },
         })
         .then((response) => {
-          this.students = response.data.data;
-          // this.pagination = response.data.meta;
-          this.links = response.data.data.links;
+          this.countries = response.data.data;
+          this.pagination = response.data.meta;
+          this.links = response.data.meta.links;
           this.$Progress.finish();
-          console.log(response);
         })
         .catch((e) => {
           console.log(e);
@@ -389,7 +268,6 @@ export default {
     },
 
     edit(id) {
-      // console.log(id);
       this.editMode = true;
       this.showMode = false;
       this.form.reset();
@@ -397,27 +275,16 @@ export default {
       this.form.fill(id);
       $("#exampleModal").modal("show");
     },
-    // onImageChange(e) {
-    //   this.form.image = e.target.files[0];
-    // },
 
-      onImageChange(e) {
-      let file = e.target.files[0];
-      let reader = new FileReader();
-      reader.onloadend = (file) => {
-          this.form.image = reader.result;
-      }
-      reader.readAsDataURL(file);
+    onImageChange(e) {
+      this.form.image = e.target.files[0];
     },
 
     store() {
       this.$Progress.start();
-          const config = {
-        headers: { 'content-type': 'multipart/form-data' }
-      }
       this.form.busy = true;
       this.form
-        .post(`http://127.0.0.1:8000/api/store`,config)
+        .post(`${this.backendUrl}country`)
         .then((response) => {
           this.getData();
           $("#exampleModal").modal("hide");
@@ -439,7 +306,7 @@ export default {
       this.$Progress.start();
       this.form.busy = true;
       this.form
-        .put(`http://127.0.0.1:8000/api/student/${this.form.id}/edit`)
+        .put(`${this.backendUrl}country/` + this.form.id)
         .then((response) => {
           this.getData();
           $("#exampleModal").modal("hide");
@@ -458,7 +325,7 @@ export default {
     },
 
     destroy(id) {
-      swal
+      this.$swal
         .fire({
           title: "Are you sure?",
           text: "You won't be able to revert this!",
@@ -470,8 +337,8 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            axios.delete(`http://127.0.0.1:8000/api/student/${id}/delete`).then((response) => {
-              swal.fire("Deleted!", response.data.message, "success");
+            axios.delete(`${this.backendUrl}country/` + id).then((response) => {
+              this.$swal.fire("Deleted!", response.data.message, "success");
               this.getData();
             });
           }
@@ -482,4 +349,4 @@ export default {
 </script>
 
 <style>
-</style> 
+</style>
