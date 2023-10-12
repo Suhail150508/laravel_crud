@@ -193,9 +193,11 @@ export default {
                   <button type="button" @click="destroy(student.id)" class="btn btn-danger btn-sm">
                     <i class="fas fa-trash-alt">Delete</i>
                   </button>
+										<button class=""><a class="btn btn-sm btn-primary" href="#" @click="downloadFile(student.id)">Download info</a></button>
+										<!-- <span style="color:red;">No Attachment</span> -->
                 </td>
               </tr>
-
+							
               <tr v-show="!students.length">
                 <td colspan="6">
                   <div class="alert alert-danger text-danger text-center" role="alert">
@@ -348,7 +350,7 @@ export default {
 
   methods: {
     getData(url) {
-      this.$Progress.start();
+      // this.$Progress.start();
       // let linkUrl = url ? url : `${this.backendUrl}student`;
       axios
         .get('http://127.0.0.1:8000/api/students', {
@@ -476,6 +478,24 @@ export default {
             });
           }
         });
+    },
+
+    downloadFile(id) {
+		// const url = `${this.backendUrl}download/student/file/${id}`;
+		axios.get(`http://127.0.0.1:8000/api/download/student/file/${id}`)
+		.then(response => {
+      console.log(response);
+			if (response.data.status !== 'error') {
+				const link = document.createElement('a');
+				link.href = url;
+				link.setAttribute('target', '_blank');
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+			} else{
+				this.$notify({ type: "error", title: "Error", text: response.data.msg });
+			}
+		})
     },
   },
 };
