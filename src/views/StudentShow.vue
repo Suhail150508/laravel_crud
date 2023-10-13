@@ -1,5 +1,7 @@
-<!-- 
 
+//.................without form pattern .............
+
+<!-- 
 <template>
   <div class="container  " style="margin-left:18rem;margin-top:4rem">
 
@@ -101,7 +103,7 @@ export default {
 
 
 
-
+//................. form pattern .............
 
 <template>
   <div id="product">
@@ -153,6 +155,7 @@ export default {
                 <div class="col-md-3">
                   <select v-model="fieldName" id="fields" class="form-select">
                     <option value="name">Name</option>
+                    <option value="name">Class</option>
                   </select>
                 </div>
 
@@ -193,7 +196,7 @@ export default {
                   <button type="button" @click="destroy(student.id)" class="btn btn-danger btn-sm">
                     <i class="fas fa-trash-alt">Delete</i>
                   </button>
-										<button class=""><a class="btn btn-sm btn-primary" href="#" @click="downloadFile(student.id)">Download info</a></button>
+										<button class="btn btn-sm btn-primary" style="font-size:1.2rem;margin-left:.4rem"><a class="text-white"  href="#" @click="downloadFile(student.id)" >Download info</a></button>
 										<!-- <span style="color:red;">No Attachment</span> -->
                 </td>
               </tr>
@@ -322,6 +325,7 @@ export default {
       showMode: false,
       keyword: "",
       fieldName: "name",
+      fieldClass:"class",
       perPage: 10,
       students:[],
       // countries: [],
@@ -357,15 +361,16 @@ export default {
           params: {
             per_page: this.perPage,
             field_name: this.fieldName,
+            field_class: this.fieldClass,
             keyword: this.keyword,
           },
         })
         .then((response) => {
           this.students = response.data.data;
-          // this.pagination = response.data.meta;
+          console.log(this.students);
+          this.pagination = response.data.meta;
           this.links = response.data.data.links;
           this.$Progress.finish();
-          console.log(response);
         })
         .catch((e) => {
           console.log(e);
@@ -413,7 +418,7 @@ export default {
     },
 
     store() {
-      this.$Progress.start();
+      // this.$Progress.start();
           const config = {
         headers: { 'content-type': 'multipart/form-data' }
       }
@@ -424,21 +429,21 @@ export default {
           this.getData();
           $("#exampleModal").modal("hide");
           if (this.form.successful) {
-            this.$Progress.finish();
+            // this.$Progress.finish();
             this.$notify({ type: "success", title: "Success", text: "Country Added" });
           } else {
-            this.$Progress.fail();
+            // this.$Progress.fail();
             this.$notify({ type: "error", title: "Error", text: "Something went wrong try again later" });
           }
         })
         .catch((e) => {
-          this.$Progress.fail();
+          // this.$Progress.fail();
           console.log(e);
         });
     },
 
     update() {
-      this.$Progress.start();
+      // this.$Progress.start();
       this.form.busy = true;
       this.form
         .put(`http://127.0.0.1:8000/api/student/${this.form.id}/edit`)
@@ -479,26 +484,48 @@ export default {
           }
         });
     },
+//...............This is for download pdf.........................
+    // downloadFile(id) {
+		// // const url = `${this.backendUrl}download/student/file/${id}`;
+		// axios.get(`http://127.0.0.1:8000/api/download/student/file/${id}`)
+		// .then(response => {
+    //   console.log(response);
+		// 	if (response.data.status !== 'error') {
+		// 		const link = document.createElement('a');
+		// 		link.href = url;
+		// 		link.setAttribute('target', '_blank');
+		// 		document.body.appendChild(link);
+		// 		link.click();
+		// 		document.body.removeChild(link);
+		// 	} else{
+		// 		this.$notify({ type: "error", title: "Error", text: response.data.msg });
+		// 	}
+		// })
+    // },
 
-    downloadFile(id) {
-		// const url = `${this.backendUrl}download/student/file/${id}`;
-		axios.get(`http://127.0.0.1:8000/api/download/student/file/${id}`)
-		.then(response => {
-      console.log(response);
-			if (response.data.status !== 'error') {
-				const link = document.createElement('a');
-				link.href = url;
-				link.setAttribute('target', '_blank');
-				document.body.appendChild(link);
-				link.click();
-				document.body.removeChild(link);
-			} else{
-				this.$notify({ type: "error", title: "Error", text: response.data.msg });
-			}
-		})
-    },
-  },
-};
+
+//...............This is for download image.........................   
+downloadFile(id) {
+axios({
+url:`http://127.0.0.1:8000/api/download/student/file/${id}`,
+method:'GET',
+responseType:'blob'
+
+}).then((response)=>{
+  var fileUrl = window.URL.createObjectURL(new Blob([response.data]))
+  // console.log(response);
+var fileLink = document.createElement('a')
+fileLink.href = fileUrl
+
+fileLink.setAttribute('download','file.jpg')
+document.body.appendChild(fileLink)
+
+fileLink.click();
+})
+
+},
+}
+}
 </script>
 
 <style>
