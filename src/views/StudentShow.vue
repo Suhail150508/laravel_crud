@@ -517,7 +517,7 @@ responseType:'blob'
 var fileLink = document.createElement('a')
 fileLink.href = fileUrl
 
-fileLink.setAttribute('download','file.jpg')
+fileLink.setAttribute('download','file.jpg')      //If you want download image then you have to write file.jpg/jpeg/png , otherwise want pdd then file.pdf
 document.body.appendChild(fileLink)
 
 fileLink.click();
